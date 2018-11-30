@@ -1,0 +1,2 @@
+# SaltStack
+Salt scripts
