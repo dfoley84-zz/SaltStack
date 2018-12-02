@@ -1,0 +1,3 @@
+base:
+  'Nodejs':
+    - nodejs-package
