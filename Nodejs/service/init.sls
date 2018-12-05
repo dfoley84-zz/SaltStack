@@ -14,3 +14,4 @@ supervisor:
     - source: salt://service/supervisor.conf
     - require:
       - pkg: supervisor
+      
