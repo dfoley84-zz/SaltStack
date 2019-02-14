@@ -8,7 +8,7 @@ copy_files1:
     - name: C:\sentinel\
     - makedirs: True
 
-#uninstall Endpoint Proctection
+#uninstall Endpoint Protection
 uninstall:
   cmd.script:
     - source: c:/s1/endpoint.ps1
