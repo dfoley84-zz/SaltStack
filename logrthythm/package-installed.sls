@@ -21,7 +21,7 @@ LRS_Install:
 
 /srv/salt/logrhythm/scsm.ini:
   file.managed:
-    - source: salt://logrhythm/scsm-recommind_dev_virginia.ini
+    - source: salt://logrhythm/scsm.ini
     - name: C:\Program Files\LogRhythm\LogRhythm System Monitor\config\scsm.ini
     - template: jinja
 
