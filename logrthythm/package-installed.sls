@@ -1,36 +1,53 @@
-{%- if grains['os_family'] == 'Windows' %}
+{% if grains['os_family'] == 'Windows' %}
 create_dir:
   file.directory:
-    - name: C:\logrhythm
+    - name: C:\logrhythm\
 
 LRS_File:
   file.managed:
     - name: c:/logrhythm/LRSystemMonitor_64_7.4.2.8003.exe
     - source: salt://logrhythm/LRSystemMonitor_64_7.4.2.8003.exe
 
-LRS_Install:
+{% if grains['fqdn'].startswith('VAP') %}
+Install_VAP:
   cmd.run:
-    - name: LRSystemMonitor_64_7.4.2.8003.exe /s /v" /qn ADDLOCAL=System_Monitor,RT_FIM_Driver HOST= SERVERPORT=443 CLIENTADDRESS={{ grains['fqdn_ip4'][0] }} ClientPort=0
+    - name: 'LRSystemMonitor_64_7.4.2.8003.exe /s /v" /qn ADDLOCAL=System_Monitor,RT_FIM_Driver HOST={{ pillar['VAPSHARED_PRIM'] }} SERVERPORT=443 CLIENTADDRESS={{ grains['fqdn_ip4'][0] }} CLIENTPORT=0'
     - cwd: C:\logrhythm
 
-/srv/salt/logrhythm/proxy-1.ini:
+{% elif grains['fqdn'].startswith('DBP') %}
+Install_MOP:
+  cmd.run:
+    - name: 'LRSystemMonitor_64_7.4.2.8003.exe /s /v" /qn ADDLOCAL=System_Monitor,RT_FIM_Driver HOST={{ pillar['DBPSHARED_PRIM'] }} SERVERPORT=443 CLIENTADDRESS={{ grains['fqdn_ip4'][0] }} CLIENTPORT=0'
+    - cwd: C:\logrhythm
+
+{% elif grains['fqdn'].startswith('LOP') %}
+Install_LOP:
+  cmd.run:
+    - name: 'LRSystemMonitor_64_7.4.2.8003.exe /s /v" /qn ADDLOCAL=System_Monitor,RT_FIM_Driver HOST={{ pillar['LOPSAHRED_PRIM'] }} SERVERPORT=443 CLIENTADDRESS={{ grains['fqdn_ip4'][0] }} CLIENTPORT=0'
+    - cwd: C:\logrhythm
+
+{% elif grains['fqdn'].startswith('MOP') %}
+Install_MOP:
+  cmd.run:
+    - name: 'LRSystemMonitor_64_7.4.2.8003.exe /s /v" /qn ADDLOCAL=System_Monitor,RT_FIM_Driver HOST={{ pillar['MOPSHARED_PRIM'] }} SERVERPORT=443 CLIENTADDRESS={{ grains['fqdn_ip4'][0] }} CLIENTPORT=0'
+    - cwd: C:\logrhythm
+{% endif %}
+
+/srv/salt/logrhythm/proxy-recommind_prod_virginia-1.ini:
   file.managed:
-    - source: salt://logrhythm/proxy-1.ini
+    - source: salt://logrhythm/proxy-recommind_prod_dublin-1.ini
     - name: C:\Program Files\LogRhythm\LogRhythm System Monitor\config\proxy.ini
     - template: jinja
 
-/srv/salt/logrhythm/scsm.ini:
+/srv/salt/logrhythm/scsm-recommind_prod_virginia.ini:
   file.managed:
-    - source: salt://logrhythm/scsm.ini
+    - source: salt://logrhythm/scsm-recommind_prod_dublin.ini
     - name: C:\Program Files\LogRhythm\LogRhythm System Monitor\config\scsm.ini
     - template: jinja
 
-AutoStart Service:
-  module.run:
-    - win_service.config:
-      - service: scsm
-      - start_type: auto
-
+Start Service:
+  cmd.run:
+    - name: 'net start scsm'
 {% endif %}
 
 {%- if grains['os_family'] == 'Ubuntu' %}
@@ -45,4 +62,5 @@ service.restart rsyslog:
     - m_name: rsyslog
     - watch:
       - file: /etc/rsyslog.conf
+
 {% endif %}
