@@ -33,15 +33,15 @@ Install_MOP:
     - cwd: C:\logrhythm
 {% endif %}
 
-/srv/salt/logrhythm/proxy-recommind_prod_virginia-1.ini:
+/srv/salt/logrhythm/proxy.ini:
   file.managed:
-    - source: salt://logrhythm/proxy-recommind_prod_dublin-1.ini
+    - source: salt://logrhythm/proxy.ini
     - name: C:\Program Files\LogRhythm\LogRhythm System Monitor\config\proxy.ini
     - template: jinja
 
-/srv/salt/logrhythm/scsm-recommind_prod_virginia.ini:
+/srv/salt/logrhythm/scsm.ini:
   file.managed:
-    - source: salt://logrhythm/scsm-recommind_prod_dublin.ini
+    - source: salt://logrhythm/scsm.ini
     - name: C:\Program Files\LogRhythm\LogRhythm System Monitor\config\scsm.ini
     - template: jinja
 
