@@ -21,7 +21,7 @@ Hostname:
 
 Join_Domain:
   cmd.run:
-    - name: 'echo "PASSWORD" | realm join -U user@{{ pillar['RMDOMAIN_CAPS'] }} {{ pillar['RMDOMAIN'] }} --verbose'
+    - name: 'echo "{{ pillar['Domain_Administrator_Password'] }}" | realm join -U {{ pillar['Domain_Administrator'] }}@{{ pillar['RMDOMAIN_CAPS'] }} {{ pillar['RMDOMAIN'] }} --verbose'
 
 Enable_Password:
   cmd.run:
