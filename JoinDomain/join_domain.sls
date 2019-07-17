@@ -27,6 +27,10 @@ Enable_Password:
   cmd.run:
     - name: 'sed -i "s/^PasswordAuthentication no/PasswordAuthentication yes/" /etc/ssh/sshd_config'
 
+Use_Fully_FQ:
+  cmd.run:
+    -name: 'sed -i "s/^use_fully_qualified_names = True/use_fully_qualified_names = False/" /etc/sssd/sssd.conf'
+
 realm_permit:
   cmd.run:
     - name: 'realm permit --groups sysops@{{ pillar['RMDOMAIN_CAPS'] }}'
