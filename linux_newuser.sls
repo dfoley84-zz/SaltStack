@@ -2,6 +2,7 @@ david:
   user.present:
     - home: /home/david
     - shell: /bin/bash
+    - password: {{ pillar['NewUserPassword'] }}
     - fullname: David
     - groups:
 {% if grains['os'] == 'Ubuntu' %}          
