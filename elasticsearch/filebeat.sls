@@ -1,27 +1,25 @@
-{% if grains['os'] == 'RedHat' %}
+{% if grains.os_family == 'RedHat' %}
+{% set update = 'yum' %}
+{% set Download_Package_FileBeat = salt['pillar.get']('ElastciSearch:Filebeat:RedHat') %}
+{% set version = '7.2.0'%}
+{% set rpm_deb = 'x86_64.rpm' %}
+{% set home = 'ec2' %}
+{% elif grains.os_family == 'Debian' %}
+{% set update = 'apt' %}
+{% set Download_Package_FileBeat = salt['pillar.get']('ElastciSearch:Filebeat:Ubuntu') %}
+{% set version = '7.2.0'%}
+{% set rpm_deb = 'amd64.deb' %}
+{% set home = 'ubuntu' %}
 
 Download_Filebeat:
   cmd.run:
-    - name: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.2.0-x86_64.rpm
-    - creates: /home/ec2-user/filebeat-7.2.0-x86_64.rpm
+    - name: {{ Download_Package_FileBeat }}
+    - creates: /home/{{ Home }}/filebeat-{{ version }}-{{ rpm_deb }}
 
 Unpackage:
   cmd.run:
-    - name: dpkg -i filebeat-7.0.1-amd64.deb
-    - cwd: /home/ec2-user/
-
-{% elif grains['os'] == 'Ubuntu' %}
-Download_Filebeat:
-  cmd.run:
-    - name: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.2.0-amd64.deb
-    - creates: /home/ubuntu/filebeat-7.2.0-amd64.deb
-
-Unpackage:
-  cmd.run:
-    - name: dpkg -i filebeat-7.2.0-amd64.deb
-    - cwd: /home/ubuntu
-
-{% endif %}
+    - name: dpkg -i filebeat-{{ version }}-{{ rpm_deb }}
+    - cwd: /home/{{ home }}/
 
 filebeat_file:
   file.managed:
