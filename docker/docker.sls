@@ -1,14 +1,15 @@
 {% if grains.os_family == 'RedHat' %}
 {% set update = 'yum' %}
-{% set keys = salt['pillar.get']('Docker:Keys:RedHat') %}
-{% set config = salt['pillar.get']('Docker:Repo:RedHat') %}
-{% set Docker_Version = salt['pillar.get']('Docker:Version:RedHat')}} %}
+{% set keys = {{ pillar['Docker']['Keys']['RedHat'] }} %}
+{% set config = {{ pillar['Docker']['Repo']['RedHat'] }} %}
+
 {% elif grains.os_family == 'Debian' %}
 {% set update = 'apt' %}
-{% set keys = salt['pillar.get']('Docker:Keys:Ubuntu') %}
-{% set config = salt['pillar.get']('Docker:Repo:Ubuntu') %}
-{% set Docker_Version = salt['pillar.get']('Docker:Version:Ubuntu')}} %}
+{% set keys = {{ pillar['Docker']['Keys']['Ubuntu'] }} %}
+{% set config = {{ pillar['Docker']['Repo']['Ubuntu'] }} %}
+{% set Docker_Version = {{ pillar['Docker']['Version']['Ubuntu'] }} %}
 {% endif %}
+
 
 Docker_key:
   cmd.run:
@@ -21,12 +22,12 @@ Docker_Repo:
 Update_Linux:
   cmd.run:
     - name: {{ update }} update
-  
+    - version: {{ Docker_Version }}
+
 Install_Docker:
   pkg.installed:
-    - name: docker-ce    
-    - version: {{ Docker_Version }}
-    
+    - name: docker-ce
+
 Docker_Run:
   service.running:
     - name: docker
